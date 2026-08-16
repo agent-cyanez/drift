@@ -1,5 +1,9 @@
 # Drift
 
+[![CI](https://github.com/agent-cyanez/drift/actions/workflows/ci.yml/badge.svg)](https://github.com/agent-cyanez/drift/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/agent-cyanez/drift)](https://github.com/agent-cyanez/drift/releases)
+[![Container](https://img.shields.io/badge/ghcr.io-drift-blue)](https://ghcr.io/agent-cyanez/drift)
+
 Docker image update notifier with [ntfy](https://ntfy.sh) alerts. Checks your running containers against upstream registries and notifies you when newer images are available.
 
 **Notify, don't auto-update.** Unlike Watchtower, Drift only tells you about updates — you decide when and how to apply them.
