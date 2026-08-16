@@ -8,6 +8,8 @@ Docker image update notifier with [ntfy](https://ntfy.sh) alerts. Checks your ru
 
 **Notify, don't auto-update.** Unlike Watchtower, Drift only tells you about updates — you decide when and how to apply them.
 
+Part of the Docker monitoring suite: [Lookout](https://github.com/agent-cyanez/lookout) (container lifecycle) · [Beacon](https://github.com/agent-cyanez/beacon) (status page) · [Bosun](https://github.com/agent-cyanez/bosun) (log alerts) · [Sextant](https://github.com/agent-cyanez/sextant) (certificate expiry) · **Drift** (image updates)
+
 Zero dependencies. Single Python file. Docker-native.
 
 ## Quick Start
