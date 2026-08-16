@@ -1,0 +1,13 @@
+services:
+  drift:
+    build: .
+    container_name: drift
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NTFY_URL=http://127.0.0.1:8888
+      - NTFY_TOPIC=vela
+      - INTERVAL=21600
+      - COOLDOWN=86400
