@@ -287,10 +287,13 @@ def should_check(image_name, filters):
 
 def send_notification(container_name, image, tag, priority="default"):
     """Send an ntfy notification about an available update."""
-    url = f"{NTFY_URL}/{NTFY_TOPIC}"
+    # Title goes in the query string, not a header: http.client encodes
+    # headers as latin-1, so the em dash made every send fail before
+    # reaching ntfy.
+    query = urllib.parse.urlencode({"title": "Drift — Image Update"})
+    url = f"{NTFY_URL}/{NTFY_TOPIC}?{query}"
     message = f"Update available for {container_name}: {image}:{tag}"
     headers = {
-        "Title": "Drift — Image Update",
         "Priority": priority,
         "Tags": "package",
     }

@@ -227,6 +227,44 @@ class TestSendNotification(unittest.TestCase):
         # Should not raise
         drift.send_notification("web", "org/app", "v2.0")
 
+    def test_non_ascii_title_over_real_socket(self):
+        """Regression: the title has an em dash. With a mocked urlopen this
+        passed while every real send failed on latin-1 header encoding, so
+        this test goes through http.client to a local server."""
+        import threading
+        import urllib.parse
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+
+        received = {}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                length = int(self.headers["Content-Length"])
+                received["path"] = self.path
+                received["body"] = self.rfile.read(length).decode("utf-8")
+                self.send_response(200)
+                self.end_headers()
+
+            def log_message(self, *args):
+                pass
+
+        server = HTTPServer(("127.0.0.1", 0), Handler)
+        server.timeout = 5
+        thread = threading.Thread(target=server.handle_request, daemon=True)
+        thread.start()
+        with patch.object(drift, "NTFY_URL", f"http://127.0.0.1:{server.server_port}"), \
+                patch.object(drift, "NTFY_TOPIC", "canary"):
+            drift.send_notification("web", "org/app", "v2.0")
+        thread.join(timeout=6)
+        server.server_close()
+
+        self.assertIn("path", received, "notification never reached the server")
+        parsed = urllib.parse.urlparse(received["path"])
+        self.assertEqual(parsed.path, "/canary")
+        self.assertEqual(urllib.parse.parse_qs(parsed.query)["title"],
+                         ["Drift — Image Update"])
+        self.assertIn("Update available for web", received["body"])
+
 
 if __name__ == "__main__":
     unittest.main()
